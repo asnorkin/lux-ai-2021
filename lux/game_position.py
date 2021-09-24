@@ -62,7 +62,7 @@ class Position:
                 closest_dist = dist
             elif dist == closest_dist:
                 closest_dirs.add(direction)
-        return random.choice(closest_dir)
+        return random.choice(closest_dirs)
 
     def __str__(self) -> str:
         return f"({self.x}, {self.y})"
