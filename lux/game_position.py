@@ -52,17 +52,17 @@ class Position:
             DIRECTIONS.SOUTH,
             DIRECTIONS.WEST,
         ]
+        random.shuffle(check_dirs)  # Shuffle for randomization
+
         closest_dist = self.distance_to(target_pos)
-        closest_dirs = {DIRECTIONS.CENTER}
+        closest_dir = DIRECTIONS.CENTER
         for direction in check_dirs:
             newpos = self.translate(direction, 1)
             dist = target_pos.distance_to(newpos)
             if dist < closest_dist:
-                closest_dirs = {direction}
+                closest_dir = direction
                 closest_dist = dist
-            elif dist == closest_dist:
-                closest_dirs.add(direction)
-        return random.choice(closest_dirs)
+        return closest_dir
 
     def __str__(self) -> str:
         return f"({self.x}, {self.y})"
