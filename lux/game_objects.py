@@ -194,14 +194,23 @@ class Unit:
         self.night_turn_survivable = turn_survivable
         self.night_travel_range = turn_survivable // (cooldown_required * 2)  # plus one perhaps
 
+        nights_survive = self.night_turn_survivable // night_length
         if turn_info:
             turns_to_night, turns_to_dawn, is_day_time = turn_info
-            travel_range = max(1, turns_to_night // cooldown_required + self.night_travel_range - cooldown_required)
-            if self.night_turn_survivable >= turns_to_dawn and not is_day_time:
-                travel_range = day_length // cooldown_required + self.night_travel_range
-            if self.night_turn_survivable >= night_length:
-                travel_range = day_length // cooldown_required + self.night_travel_range
-            self.travel_range = travel_range
+            if not is_day_time:
+                nights_survive = (self.night_turn_survivable - turns_to_dawn) // night_length + 1
+
+        day_travel_range = day_length // cooldown_required
+        self.travel_range = self.night_travel_range + day_travel_range * nights_survive
+
+        # if turn_info:
+        #     turns_to_night, turns_to_dawn, is_day_time = turn_info
+        #     travel_range = max(1, turns_to_night // cooldown_required + self.night_travel_range - cooldown_required)
+        #     if self.night_turn_survivable >= turns_to_dawn and not is_day_time:
+        #         travel_range = day_length // cooldown_required + self.night_travel_range
+        #     if self.night_turn_survivable >= night_length:
+        #         travel_range = day_length // cooldown_required + self.night_travel_range
+        #     self.travel_range = travel_range
 
     def encode_tuple_for_cmp(self):
         return (self.cooldown, self.cargo.wood, self.cargo.coal, self.cargo.uranium, self.is_worker())
