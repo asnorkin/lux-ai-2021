@@ -195,13 +195,15 @@ class Unit:
         self.night_travel_range = turn_survivable // (cooldown_required * 2)  # plus one perhaps
 
         nights_survive = self.night_turn_survivable // night_length
+        day_travel_range = day_length // cooldown_required
+        turns_to_night = 0
+
         if turn_info:
             turns_to_night, turns_to_dawn, is_day_time = turn_info
             if not is_day_time:
                 nights_survive = (self.night_turn_survivable - turns_to_dawn) // night_length + 1
 
-        day_travel_range = day_length // cooldown_required
-        self.travel_range = self.night_travel_range + day_travel_range * nights_survive
+        self.travel_range = self.night_travel_range + day_travel_range * nights_survive + turns_to_night // cooldown_required
 
         # if turn_info:
         #     turns_to_night, turns_to_dawn, is_day_time = turn_info
