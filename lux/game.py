@@ -568,10 +568,12 @@ class Game:
         for y in self.y_iteration_order:
             for x in self.x_iteration_order:
                 if (x,y) in self.collectable_tiles_xy_set:
-                    if (x,y) in self.wood_exist_xy_set or (x,y) in self.uranium_exist_xy_set:
-                        self.xy_to_resource_group_id.find((x,y), point=5)  # Change points?
+                    if (x,y) in self.wood_exist_xy_set:
+                        self.xy_to_resource_group_id.find((x, y), point=20)
+                    elif (x,y) in self.coal_exist_xy_set:
+                        self.xy_to_resource_group_id.find((x, y), point=5)
                     else:
-                        self.xy_to_resource_group_id.find((x,y), point=5)  # Change points?
+                        self.xy_to_resource_group_id.find((x,y), point=2)
 
         for y in self.y_iteration_order:
             for x in self.x_iteration_order:
