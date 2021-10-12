@@ -1,6 +1,7 @@
 # functions executing the actions
 
 import builtins as __builtin__
+import random
 from typing import Tuple, List
 
 from lux.game import Game, Mission, Missions
@@ -48,8 +49,9 @@ def make_city_actions(game_state: Game, missions: Missions, DEBUG=False) -> List
     if not city_tiles:
         return []
 
-    city_tiles.sort(key=lambda city_tile:
-        (city_tile.pos.x*game_state.x_order_coefficient, city_tile.pos.y*game_state.y_order_coefficient))
+    # city_tiles.sort(key=lambda city_tile:
+    #     (city_tile.pos.x*game_state.x_order_coefficient, city_tile.pos.y*game_state.y_order_coefficient))
+    random.shuffle(city_tiles)
 
     for city_tile in city_tiles:
         if not city_tile.can_act():
