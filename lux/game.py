@@ -137,13 +137,6 @@ class Game:
     def turn_info(self):
         return self.turns_to_night, self.turns_to_dawn, self.is_day_time
 
-    @property
-    def night_turns_left(self):
-        full_cycles = (359 - self.turn) // 40
-        night_turns = 10 if self.is_day_time else self.turns_to_dawn
-        night_turns += full_cycles * 10
-        return night_turns
-
     def _initialize(self, messages):
         """
         initialize state
