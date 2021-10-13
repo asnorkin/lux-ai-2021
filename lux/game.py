@@ -133,6 +133,10 @@ class Game:
     # counted from the time after the objects are saved to disk
     compute_start_time = -1
 
+    @property
+    def turn_info(self):
+        return self.turns_to_night, self.turns_to_dawn, self.is_day_time
+
     def _initialize(self, messages):
         """
         initialize state
