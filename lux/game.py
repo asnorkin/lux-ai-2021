@@ -655,7 +655,7 @@ class Game:
 
         return nearest_position, best_distance_with_features
 
-    def get_nearest_citytile(self, current_position: Position, not_alive_only=False, max_dist=float("+inf")) -> Tuple[Position, int]:
+    def get_nearest_citytile(self, current_position: Position, not_alive_only=False) -> Position:
         nearest_position, nearest_distance = None, float("+inf")
         for city in self.player.cities.values():
             if not_alive_only and city.will_alive_till_end(self):
@@ -663,10 +663,10 @@ class Game:
 
             for tile in city.citytiles:
                 dist = self.retrieve_distance(current_position.x, current_position.y, tile.pos.x, tile.pos.y)
-                if current_position.distance_to(tile.pos) <= max_dist and dist < nearest_distance:
+                if dist < nearest_distance:
                     nearest_position, nearest_distance = tile.pos, dist
 
-        return nearest_position, nearest_distance
+        return nearest_position
 
     def get_nearest_risky_citytile(self, current_position: Position, max_dist=float("+inf")) -> Position:
         best_position, best_normed_size = None, 0
