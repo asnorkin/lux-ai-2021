@@ -205,7 +205,7 @@ class Unit:
 
         nights_survive = self.night_turn_survivable // night_length
         day_travel_range = day_length // cooldown_required
-        turns_to_night = 0
+        turns_to_night = 0 if game_state is None else game_state.turns_to_night
 
         if game_state and not game_state.is_day_time:
             nights_survive = (self.night_turn_survivable - game_state.turns_to_dawn) // night_length + 1
