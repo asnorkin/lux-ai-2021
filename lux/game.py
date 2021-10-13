@@ -551,10 +551,10 @@ class Game:
         # calculate value of the resource considering the reasearch level
         self.collectable_tiles_matrix = self.wood_exist_matrix
 
-        if self.player.researched_coal():
+        if self.player.researched_coal(in_turns=20):
             self.collectable_tiles_matrix += self.coal_exist_matrix
 
-        if self.player.researched_uranium():
+        if self.player.researched_uranium(in_turns=20):
             self.collectable_tiles_matrix += self.uranium_exist_matrix
 
         # adjacent cells collect from the cell as well
