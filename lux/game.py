@@ -663,7 +663,7 @@ class Game:
 
             for tile in city.citytiles:
                 dist = self.retrieve_distance(current_position.x, current_position.y, tile.pos.x, tile.pos.y)
-                if dist <= max_dist and dist < nearest_distance:
+                if current_position.distance_to(tile.pos) <= max_dist and dist < nearest_distance:
                     nearest_position, nearest_distance = tile.pos, dist
 
         return nearest_position, nearest_distance
