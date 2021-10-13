@@ -147,6 +147,11 @@ def make_unit_missions(game_state: Game, missions: Missions, DEBUG=False) -> Mis
             if nearest_position is not None:
                 best_position = nearest_position
 
+        # Hotfix
+        # [TODO] Check what is the problem
+        if best_position is None:
+            best_position = unit.pos
+
         distance_from_best_position = game_state.retrieve_distance(unit.pos.x, unit.pos.y, best_position.x, best_position.y)
         print("plan mission adaptative", unit.id, unit.pos, "->", best_position)
         mission = Mission(unit.id, best_position, None)
