@@ -143,6 +143,9 @@ class Unit:
     def has_resources(self):
         return self.cargo.wood + self.cargo.coal + self.cargo.uranium > 0
 
+    def has_non_wood_resources(self):
+        return self.cargo.coal + self.cargo.uranium > 0
+
     def can_build(self, game_map) -> bool:
         """
         whether or not the unit can build where it is right now
