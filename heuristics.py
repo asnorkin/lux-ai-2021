@@ -19,7 +19,7 @@ def find_best_cluster(game_state: Game, unit: Unit, distance_multiplier = -0.5, 
     else: print = lambda *args: None
 
     # passing game_state attributes to compute travel range
-    unit.compute_travel_range(game_state.turn_info)
+    unit.compute_travel_range(game_state)
 
     # for debugging
     score_matrix_wrt_pos = game_state.init_matrix()
