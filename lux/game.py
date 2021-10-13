@@ -667,3 +667,18 @@ class Game:
                     nearest_position, nearest_distance = tile.pos, dist
 
         return nearest_position, nearest_distance
+
+    def get_nearest_risky_citytile(self, current_position: Position, max_dist=float("+inf")) -> Position:
+        best_position, best_normed_size = None, 0
+        for city in self.player.cities.values():
+            if city.will_alive_till_end(self):
+                continue
+
+            citysize = len(city.citytiles)
+            for tile in city.citytiles:
+                dist = self.retrieve_distance(current_position.x, current_position.y, tile.pos.x, tile.pos.y)
+                normed_size = citysize / np.sqrt(dist)
+                if current_position.distance_to(tile.pos) <= max_dist and normed_size > best_normed_size:
+                    best_position, best_normed_size = tile.pos, normed_size
+
+        return best_position
