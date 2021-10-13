@@ -3,6 +3,7 @@ import random
 from typing import Dict, List
 
 from .constants import Constants
+from .game import Game
 from .game_position import Position
 from .game_constants import GAME_CONSTANTS
 
@@ -47,6 +48,9 @@ class City:
 
     def get_light_upkeep(self):
         return self.light_upkeep
+
+    def will_alive_till_end(self, game_state: Game):
+        return self.fuel > self.light_upkeep * game_state.night_turns_left
 
 
 class CityTile:

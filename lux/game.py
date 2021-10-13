@@ -137,6 +137,13 @@ class Game:
     def turn_info(self):
         return self.turns_to_night, self.turns_to_dawn, self.is_day_time
 
+    @property
+    def night_turns_left(self):
+        full_cycles = (359 - self.turn) // 40
+        night_turns = 10 if self.is_day_time else self.turns_to_dawn
+        night_turns += full_cycles * 10
+        return night_turns
+
     def _initialize(self, messages):
         """
         initialize state
@@ -655,12 +662,15 @@ class Game:
 
         return nearest_position, best_distance_with_features
 
-    def get_nearest_citytile(self, current_position: Position) -> Tuple[Position, int]:
+    def get_nearest_citytile(self, current_position: Position, not_alive_only=False) -> Tuple[Position, int]:
         nearest_position, nearest_distance = None, float("+inf")
-        for x, y in self.player_city_tile_xy_set:
-            dist = self.retrieve_distance(current_position.x, current_position.y, x, y)
-            if dist < nearest_distance:
-                nearest_position = Position(x, y)
-                nearest_distance = dist
+        for city in self.player.cities.values():
+            if not_alive_only and city.will_alive_till_end(self):
+                continue
+
+            for tile in city.citytiles:
+                dist = self.retrieve_distance(current_position.x, current_position.y, tile.pos.x, tile.pos.y)
+                if dist < nearest_distance:
+                    nearest_position, nearest_distance = tile.pos, dist
 
         return nearest_position, nearest_distance
