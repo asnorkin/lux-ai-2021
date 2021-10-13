@@ -142,7 +142,7 @@ def make_unit_missions(game_state: Game, missions: Missions, DEBUG=False) -> Mis
         best_position, best_cell_value = find_best_cluster(game_state, unit, DEBUG=DEBUG)
 
         # If no best cluster and unit has resources then find the closest city and move to it
-        if best_cell_value == 0 and unit.has_resources():
+        if best_cell_value == (0,0,0,0) and unit.has_resources():
             best_position, _distance = game_state.get_nearest_citytile(unit.pos)
 
         distance_from_best_position = game_state.retrieve_distance(unit.pos.x, unit.pos.y, best_position.x, best_position.y)
