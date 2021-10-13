@@ -654,3 +654,13 @@ class Game:
                     nearest_position = position
 
         return nearest_position, best_distance_with_features
+
+    def get_nearest_citytile(self, current_position: Position) -> Tuple[Position, int]:
+        nearest_position, nearest_distance = None, float("+inf")
+        for x, y in self.player_city_tile_xy_set:
+            dist = self.retrieve_distance(current_position.x, current_position.y, x, y)
+            if dist < nearest_distance:
+                nearest_position = Position(x, y)
+                nearest_distance = dist
+
+        return nearest_position, nearest_distance
