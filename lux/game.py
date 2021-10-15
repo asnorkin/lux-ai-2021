@@ -114,7 +114,8 @@ class DisjointSet:
         return self.sizes[self.find(a)]
 
     def get_point(self, a):
-        return self.points[self.find(a)]
+        a = self.find(a)
+        return self.points[a] * self.sizes[a]
 
     def get_groups(self):
         groups = defaultdict(list)
