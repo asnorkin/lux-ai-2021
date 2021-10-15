@@ -582,10 +582,11 @@ class Game:
         for y in self.y_iteration_order:
             for x in self.x_iteration_order:
                 if (x,y) in self.collectable_tiles_xy_set:
-                    for dy,dx in [(1,0),(0,1),(-1,0),(0,-1)]:
+                    for dy,dx in [(1,0),(0,1),(-1,0),(0,-1)] + [(1,1), (1,-1), (-1,1), (-1,-1)]:
                         xx, yy = x+dx, y+dy
                         if 0 <= yy < self.map_height and 0 <= xx < self.map_width:
                             self.xy_to_resource_group_id.union((x,y), (xx,yy))
+
 
 
     def repopulate_targets(self, missions: Missions):
