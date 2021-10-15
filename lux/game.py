@@ -616,6 +616,13 @@ class Game:
             if leader:
                 self.resource_leader_to_targeting_units[leader].add(unit_id)
 
+        self.units_mining_on_cluster: DefaultDict[Tuple, Set[str]] = defaultdict(set)
+        for leader in self.resource_leader_to_locating_units:
+            self.units_mining_on_cluster[leader] = self.resource_leader_to_locating_units[leader] & self.resource_leader_to_targeting_units[leader]
+
+        self.units_locating_or_targeting_on_cluster: DefaultDict[Tuple, Set[str]] = defaultdict(set)
+        for leader in set(self.resource_leader_to_locating_units.keys()) | set(self.resource_leader_to_targeting_units.keys()):
+            self.units_locating_or_targeting_on_cluster[leader] = self.resource_leader_to_locating_units[leader] | self.resource_leader_to_targeting_units[leader]
 
     def get_nearest_empty_tile_and_distance(self, current_position: Position, current_target: Position=None) -> Tuple[Position, int]:
         best_distance_with_features = (10**9+7,0,0)
