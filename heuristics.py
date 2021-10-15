@@ -68,9 +68,10 @@ def find_best_cluster(game_state: Game, unit: Unit, distance_multiplier = -0.5, 
 
                     # target bonus depends on how many resource tiles and how many units that are mining or targeting
                     if len(units_targeting_or_mining_on_target_cluster) == 0:
-                        target_bonus = game_state.xy_to_resource_group_id.get_point(target_leader)/\
-                                       (1 + len(game_state.resource_leader_to_locating_units[target_leader] &
-                                                game_state.resource_leader_to_targeting_units[target_leader]))
+                        point = game_state.xy_to_resource_group_id.get_point(target_leader)
+                        size = game_state.xy_to_resource_group_id.get_size(target_leader)
+                        units_mining_on_target_leader = len(game_state.resource_leader_to_locating_units[target_leader] & game_state.resource_leader_to_targeting_units[target_leader])
+                        target_bonus = point * size / (1 + units_mining_on_target_leader)
 
                     if consider_different_cluster_must:
                         target_bonus = target_bonus * 100
