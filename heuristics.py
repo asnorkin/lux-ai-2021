@@ -3,6 +3,8 @@
 
 import builtins as __builtin__
 
+import numpy as np
+
 from lux.game import Game, Unit
 from lux.game_position import Position
 
@@ -58,6 +60,10 @@ def find_best_cluster(game_state: Game, unit: Unit, distance_multiplier = -0.5, 
             if game_state.convolved_collectable_tiles_matrix[y, x] == 0:
                 continue
 
+            # using path distance
+            distance = game_state.retrieve_distance(unit.pos.x, unit.pos.y, x, y)
+            distance = max(0.5, distance)  # prevent zero error
+
             target_bonus = 1
             target_leader = game_state.xy_to_resource_group_id.find((x, y))
             if target_leader is not None:
@@ -65,8 +71,8 @@ def find_best_cluster(game_state: Game, unit: Unit, distance_multiplier = -0.5, 
                 size = game_state.xy_to_resource_group_id.get_size(target_leader)
                 collection_rate = _collection_rate(target_leader)
                 avg_resource_amount = game_state.cluster_resource_amounts[target_leader] / size
-                units_locating_or_targeting_on_cluster = len(game_state.units_locating_or_targeting_on_cluster[target_leader])
-                target_bonus = point * collection_rate * avg_resource_amount / (1 + units_locating_or_targeting_on_cluster)
+                units_on_cluster = len(game_state.units_locating_or_targeting_on_cluster[target_leader])
+                target_bonus = point * collection_rate * avg_resource_amount / ((1 + units_on_cluster) * np.sqrt(distance))
                 if (consider_different_cluster_must and target_leader != current_leader) or \
                         (not consider_different_cluster and target_leader == current_leader):
                     target_bonus *= 1000
@@ -81,11 +87,6 @@ def find_best_cluster(game_state: Game, unit: Unit, distance_multiplier = -0.5, 
                     break
             else:
                 empty_tile_bonus = 1/(0.5+max(1,game_state.distance_from_buildable_tile[y,x]))
-
-            # scoring function
-            # using path distance
-            distance = game_state.retrieve_distance(unit.pos.x, unit.pos.y, x, y)
-            distance = max(0.5, distance)  # prevent zero error
 
             # estimate target score
             if distance <= unit.travel_range:
