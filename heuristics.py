@@ -32,6 +32,15 @@ def find_best_cluster(game_state: Game, unit: Unit, distance_multiplier = -0.5, 
     # must consider other cluster if the current cluster has more agent than tiles
     consider_different_cluster_must = len(units_mining_on_current_cluster) >= resource_size_of_current_cluster
 
+    def _collection_rate(leader):
+        if (x,y) in game_state.wood_exist_xy_set:
+            return game_state.wood_collection_rate
+        if (x,y) in game_state.coal_exist_xy_set:
+            return game_state.coal_collection_rate
+        if (x,y) in game_state.uranium_exist_xy_set:
+            return game_state.uranium_collection_rate
+        return 0
+
     for y in game_state.y_iteration_order:
         for x in game_state.x_iteration_order:
 
@@ -45,12 +54,16 @@ def find_best_cluster(game_state: Game, unit: Unit, distance_multiplier = -0.5, 
             if (x,y) in game_state.player_city_tile_xy_set:
                 continue
 
+            # No resources => do not consider
+            if game_state.convolved_collectable_tiles_matrix[y, x] == 0:
+                continue
+
             target_bonus = 1
             target_leader = game_state.xy_to_resource_group_id.find((x, y))
             if target_leader is not None:
                 point = game_state.xy_to_resource_group_id.get_point(target_leader)
-                size = game_state.xy_to_resource_group_id.get_size(target_leader)
-                target_bonus = point * size / (1 + len(game_state.units_locating_or_targeting_on_cluster[target_leader]))
+                units_locating_or_targeting_on_cluster = len(game_state.units_locating_or_targeting_on_cluster[target_leader])
+                target_bonus = point * _collection_rate(target_leader) / (1 + units_locating_or_targeting_on_cluster)
                 if (consider_different_cluster_must and target_leader != current_leader) or \
                         (not consider_different_cluster and target_leader == current_leader):
                     target_bonus *= 1000
@@ -67,23 +80,22 @@ def find_best_cluster(game_state: Game, unit: Unit, distance_multiplier = -0.5, 
                 empty_tile_bonus = 1/(0.5+max(1,game_state.distance_from_buildable_tile[y,x]))
 
             # scoring function
-            if game_state.convolved_collectable_tiles_matrix[y,x] > 0:
-                # using path distance
-                distance = game_state.retrieve_distance(unit.pos.x, unit.pos.y, x, y)
-                distance = max(0.5, distance)  # prevent zero error
+            # using path distance
+            distance = game_state.retrieve_distance(unit.pos.x, unit.pos.y, x, y)
+            distance = max(0.5, distance)  # prevent zero error
 
-                # estimate target score
-                if distance <= unit.travel_range:
-                    cell_value = (target_bonus,
-                                  empty_tile_bonus * game_state.convolved_collectable_tiles_matrix[y,x] * distance ** distance_multiplier,
-                                  game_state.distance_from_edge[y,x],
-                                  -game_state.distance_from_opponent_assets[y,x])
-                    score_matrix_wrt_pos[y,x] = cell_value[0]*1000 + cell_value[1]*100 + cell_value[2]*10 + cell_value[3]
+            # estimate target score
+            if distance <= unit.travel_range:
+                cell_value = (target_bonus,
+                              empty_tile_bonus * game_state.convolved_collectable_tiles_matrix[y,x] * distance ** distance_multiplier,
+                              game_state.distance_from_edge[y,x],
+                              -game_state.distance_from_opponent_assets[y,x])
+                score_matrix_wrt_pos[y,x] = cell_value[0]*1000 + cell_value[1]*100 + cell_value[2]*10 + cell_value[3]
 
-                    # update best target
-                    if cell_value > best_cell_value:
-                        best_cell_value = cell_value
-                        best_position = Position(x,y)
+                # update best target
+                if cell_value > best_cell_value:
+                    best_cell_value = cell_value
+                    best_position = Position(x,y)
 
     # for debugging
     game_state.heuristics_from_positions[tuple(unit.pos)] = score_matrix_wrt_pos
