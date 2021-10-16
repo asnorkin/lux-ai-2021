@@ -124,8 +124,11 @@ class DisjointSet:
                 groups[leader].append(element)
         return groups
 
+    def get_leaders(self):
+        return {element for element in self.parent if self.parent[element] == element}
+
     def get_group_count(self):
-        return sum(self.points[leader] > 1 for leader in self.get_groups().keys())
+        return sum(self.points[leader] > 1 for leader in self.get_leaders())
 
 
 class Game:
@@ -587,7 +590,28 @@ class Game:
                         if 0 <= yy < self.map_height and 0 <= xx < self.map_width:
                             self.xy_to_resource_group_id.union((x,y), (xx,yy))
 
+    def calculate_resources_amount(self):
+        def _resource_amount(leader):
+            x, y = leader
+            visited = {leader}
+            result = self.all_resource_amount_matrix[y, x]
+            queue = deque()
+            while queue:
+                x, y = queue.popleft()
+                for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)] + [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
+                    xx, yy = x + dx, y + dy
+                    if (xx, yy) in visited:
+                        continue
 
+                    visited.add((xx, yy))
+                    queue.append((xx, yy))
+                    result += self.all_resource_amount_matrix[y, x]
+
+            return result
+
+        self.cluster_resource_amounts = dict()
+        for leader in self.xy_to_resource_group_id.get_leaders():
+            self.cluster_resource_amounts[leader] = _resource_amount(leader)
 
     def repopulate_targets(self, missions: Missions):
         # with missions, populate the following objects for use
