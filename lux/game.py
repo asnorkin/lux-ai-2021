@@ -307,6 +307,7 @@ class Game:
         self.calculate_matrix()
         self.calculate_resource_matrix()
         self.calculate_resource_groups()
+        self.calculate_resources_amount()
         self.calculate_distance_matrix()
 
         self.repopulate_targets(missions)
