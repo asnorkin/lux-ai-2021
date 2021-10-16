@@ -25,21 +25,21 @@ def find_best_cluster(game_state: Game, unit: Unit, distance_multiplier = -0.5, 
 
     # calculate how resource tiles and how many units on the current cluster
     current_leader = game_state.xy_to_resource_group_id.find(tuple(unit.pos))
-    units_mining_on_current_cluster = game_state.resource_leader_to_locating_units[current_leader] & game_state.resource_leader_to_targeting_units[current_leader]
+    units_mining_on_current_cluster = len(game_state.units_mining_on_cluster[current_leader])
     resource_size_of_current_cluster = game_state.xy_to_resource_group_id.get_point(current_leader)
 
     # only consider other cluster if the current cluster has at least one agent mining
-    consider_different_cluster = len(units_mining_on_current_cluster) > 0
+    consider_different_cluster = units_mining_on_current_cluster > 0
 
     # must consider other cluster if the current cluster has more agent than tiles
-    consider_different_cluster_must = len(units_mining_on_current_cluster) >= resource_size_of_current_cluster
+    consider_different_cluster_must = units_mining_on_current_cluster >= resource_size_of_current_cluster
 
     def _collection_rate(leader):
-        if (x,y) in game_state.wood_exist_xy_set:
+        if leader in game_state.wood_exist_xy_set:
             return game_state.wood_collection_rate
-        if (x,y) in game_state.coal_exist_xy_set:
+        if leader in game_state.coal_exist_xy_set:
             return game_state.coal_collection_rate
-        if (x,y) in game_state.uranium_exist_xy_set:
+        if leader in game_state.uranium_exist_xy_set:
             return game_state.uranium_collection_rate
         return 0
 
